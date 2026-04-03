@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}新增費用{% endblock %}
+
+{% block content %}
+    <h1>新增費用</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="user_input">輸入花費</label>
+        <input type="text" id="user_input" name="user_input"
+               placeholder="例如：午餐120、捷運30、電影票250" required>
+        <button type="submit" class="btn btn-primary" id="submit-btn">送出</button>
+    </form>
+
+    <div id="ai-loading" class="loading-container" style="display:none;">
+        <div class="loader"></div>
+        <p>AI 解析中...</p>
+    </div>
+
+    <p><a href="{% url 'expense_list' %}">← 查帳</a></p>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const btn = document.getElementById('submit-btn');
+    const loading = document.getElementById('ai-loading');
+
+    form.addEventListener('submit', function() {
+        btn.disabled = true;
+        btn.textContent = 'AI 解析中...';
+        loading.style.display = 'block';
+    });
+});
+</script>
+{% endblock %}

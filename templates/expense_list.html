@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}查帳{% endblock %}
+
+{% block content %}
+
+    <div class="top-bar">
+        <h1>查帳</h1>
+        <div class="user-area">
+            <span>{{ request.user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-ghost">登出</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <form method="get">
+            <input type="month" id="month" name="month" value="{{ month }}">
+            <button type="submit" class="btn btn-search">查詢</button>
+        </form>
+    </div>
+
+    {% if expenses %}
+
+        <div class="summary">
+            <div class="summary-total">當月總計 <span>{{ total }}</span></div>
+            <div class="category-chips">
+                {% for c in by_category %}
+                    <div class="chip">
+                        <span class="chip-label">{{ c.category }}</span>
+                        <span class="chip-amount">{{ c.subtotal }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="expense-list">
+            {% for e in expenses %}
+                <div class="expense-card">
+                    <div class="expense-left">
+                        <span class="expense-item">{{ e.item }}</span>
+                        <span class="expense-meta">{{ e.expense_date }} · {{ e.category }}</span>
+                    </div>
+                    <div class="expense-right">
+                        <span class="expense-amount">{{ e.amount }}</span>
+                        <a href="{% url 'edit_expense' e.id %}" class="btn btn-ghost">編輯</a>  
+                        <form method="post" action="{% url 'delete_expense' e.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">刪除</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="empty">這個月還沒有記帳資料</div>
+    {% endif %}
+
+    <p><a href="{% url 'add_expense' %}">← 新增支出</a></p>
+
+{% endblock %}
